@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -exo pipefail
+
+docker build --tag mock-jwt-server .
+
+EXTERNAL_PORT=${1:-8080}
+
+docker run --rm \
+  --publish "$EXTERNAL_PORT:8080" \
+  --name mock-jwt-server \
+  -e ISSUER \
+  -e SUBJECT \
+  -e AUDIENCE \
+  -e NAME \
+  -e EMAIL \
+  -e EXTERNAL_PORT \
+  mock-jwt-server
