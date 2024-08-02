@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -exo pipefail
+
+docker build --tag mock-jwt-server .
