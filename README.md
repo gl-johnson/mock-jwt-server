@@ -24,6 +24,7 @@ export SUBJECT="some-subject"
 export AUDIENCE="some-audience"
 export NAME="Some Name"
 export EMAIL="some-email@example.com"
+export EXTRA_CLAIMS="some-claim=some-value;another-claim=another-value"
 
 ./bin/start
 ```
