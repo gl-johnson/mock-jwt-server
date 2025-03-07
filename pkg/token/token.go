@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gl-johnson/mock-jwt-server/pkg/jwk"
@@ -13,20 +14,22 @@ import (
 )
 
 type Config struct {
-	Issuer   string
-	Subject  string
-	Audience string
-	Name     string
-	Email    string
+	Issuer      string
+	Subject     string
+	Audience    string
+	Name        string
+	Email       string
+	ExtraClaims map[string]string
 }
 
 func NewConfig() Config {
 	return Config{
-		Issuer:   getEnvOrDefault("ISSUER", "mock-jwt-server"),
-		Subject:  getEnvOrDefault("SUBJECT", "test-subject"),
-		Audience: getEnvOrDefault("AUDIENCE", "test-audience"),
-		Name:     getEnvOrDefault("NAME", "test-name"),
-		Email:    getEnvOrDefault("EMAIL", "test-email"),
+		Issuer:      getEnvOrDefault("ISSUER", "mock-jwt-server"),
+		Subject:     getEnvOrDefault("SUBJECT", "test-subject"),
+		Audience:    getEnvOrDefault("AUDIENCE", "test-audience"),
+		Name:        getEnvOrDefault("NAME", "test-name"),
+		Email:       getEnvOrDefault("EMAIL", "test-email"),
+		ExtraClaims: getExtraClaims(),
 	}
 }
 
@@ -37,13 +40,32 @@ func getEnvOrDefault(key, defaultValue string) string {
 	return defaultValue
 }
 
+func getExtraClaims() map[string]string {
+	envExtraClaims := os.Getenv("EXTRA_CLAIMS")
+	if envExtraClaims == "" {
+		return map[string]string{}
+	}
+
+	extraClaims := strings.Split(envExtraClaims, ";")
+	claims := map[string]string{}
+	for _, claim := range extraClaims {
+		parts := strings.Split(claim, "=")
+		if len(parts) != 2 {
+			continue
+		}
+		claims[parts[0]] = parts[1]
+	}
+	return claims
+}
+
 func IssueToken(keyName, alg string, config Config) (string, error) {
 	key, err := jwk.GetJWKS(keyName, alg)
 	if err != nil {
 		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.GetSigningMethod(alg), jwt.MapClaims{
+	// Standard claims
+	claims := jwt.MapClaims{
 		"sub":   config.Subject,
 		"name":  config.Name,
 		"email": config.Email,
@@ -51,7 +73,16 @@ func IssueToken(keyName, alg string, config Config) (string, error) {
 		"aud":   config.Audience,
 		"iat":   time.Now().Unix(),
 		"exp":   time.Now().Add(time.Hour * 24).Unix(),
-	})
+	}
+
+	// Extra claims
+	if len(config.ExtraClaims) > 0 {
+		for key, value := range config.ExtraClaims {
+			claims[key] = value
+		}
+	}
+
+	token := jwt.NewWithClaims(jwt.GetSigningMethod(alg), claims)
 
 	token.Header["kid"] = keyName
 

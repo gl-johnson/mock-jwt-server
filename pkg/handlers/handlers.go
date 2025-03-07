@@ -17,6 +17,13 @@ func JWKSHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(jwks)
 }
 
+func OIDCConfigHandler(w http.ResponseWriter, r *http.Request) {
+	config := jwk.GetOIDCConfig()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(config))
+}
+
 func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	keyName := "default"
 	alg := "RS256"
