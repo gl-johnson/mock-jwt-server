@@ -11,6 +11,7 @@ import (
 
 func main() {
 	http.HandleFunc("/.well-known/jwks.json", handlers.JWKSHandler)
+	http.HandleFunc("/.well-known/openid-configuration", handlers.OIDCConfigHandler)
 	http.HandleFunc("/jwks", handlers.JWKSHandler)
 	http.HandleFunc("/token", handlers.TokenHandler)
 	http.HandleFunc("/", handlers.DynamicKeyHandler)
