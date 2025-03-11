@@ -30,6 +30,13 @@ func TestGetJWKS(t *testing.T) {
 	assert.Len(t, jwks.Keys, 2)
 	assert.Equal(t, jwks.Keys[0].KeyID, "valid")
 	assert.Equal(t, jwks.Keys[1].KeyID, "another")
+
+	// Test DeleteKey
+	DeleteKey("valid")
+	jwks = GetAllJWKS()
+	assert.NotNil(t, jwks)
+	assert.Len(t, jwks.Keys, 1)
+	assert.Equal(t, jwks.Keys[0].KeyID, "another")
 }
 
 func TestGetOrCreateKey(t *testing.T) {
