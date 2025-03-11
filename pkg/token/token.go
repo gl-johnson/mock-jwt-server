@@ -108,8 +108,6 @@ func IssueToken(keyName, alg string, config Config) (string, error) {
 
 func SignToken(keyName, alg, remoteToken string) (string, error) {
 	// Parse the unsigned token to extract claims
-	// parser := new(jwt.Parser)
-	// parser.SkipClaimsValidation = true // Skip validation since we're dealing with an unsigned token
 	parser := jwt.NewParser(jwt.WithoutClaimsValidation())
 
 	token, _, err := parser.ParseUnverified(remoteToken, jwt.MapClaims{})
@@ -117,7 +115,6 @@ func SignToken(keyName, alg, remoteToken string) (string, error) {
 		return "", fmt.Errorf("failed to parse token: %v", err)
 	}
 
-	// Get the claims from the original token
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return "", fmt.Errorf("invalid claims in token")
