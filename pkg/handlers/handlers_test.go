@@ -99,3 +99,13 @@ func TestDynamicKeyHandler_Post(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, respBody, "token")
 }
+
+func TestDynamicKeyHandler_Delete(t *testing.T) {
+	req := httptest.NewRequest(http.MethodDelete, "/default/RS256", nil)
+	rr := httptest.NewRecorder()
+
+	DynamicKeyHandler(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+	assert.Equal(t, "DELETED", rr.Body.String())
+}
