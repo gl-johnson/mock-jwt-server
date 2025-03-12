@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gl-johnson/mock-jwt-server/pkg/jwk"
+	"github.com/cyberark/mock-jwt-server/pkg/jwk"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

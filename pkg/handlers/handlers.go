@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gl-johnson/mock-jwt-server/pkg/jwk"
-	"github.com/gl-johnson/mock-jwt-server/pkg/token"
+	"github.com/cyberark/mock-jwt-server/pkg/jwk"
+	"github.com/cyberark/mock-jwt-server/pkg/token"
 )
 
 func JWKSHandler(w http.ResponseWriter, r *http.Request) {

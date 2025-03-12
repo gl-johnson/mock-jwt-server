@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -exo pipefail
+
+# Publish `latest` tag to registry.tld and dockerhub on RELEASE builds. For now we do not plan to use promotions in this repo.
+readonly IMAGE_NAME="mock-jwt-server"
+readonly LOCAL_REGISTRY="registry.tld"
+readonly REGISTRY="cyberark"
+
+SOURCE_TAG="latest"
+REMOTE_TAG="latest"
+readonly TAGS=(
+"$(cat VERSION)"
+"$REMOTE_TAG"
+)
+
+echo "Publishing image to registry.tld."
+for tag in "${TAGS[@]}"; do
+    docker tag "$IMAGE_NAME:$SOURCE_TAG" "${LOCAL_REGISTRY}/$IMAGE_NAME:$tag"
+    docker push "${LOCAL_REGISTRY}/$IMAGE_NAME:$tag"
+done
+
+echo "Publishing image to dockerhub."
+for tag in "${TAGS[@]}"; do
+    docker tag "$IMAGE_NAME:$SOURCE_TAG" "$REGISTRY/$IMAGE_NAME:$tag"
+    docker push "$REGISTRY/$IMAGE_NAME:$tag"
+done

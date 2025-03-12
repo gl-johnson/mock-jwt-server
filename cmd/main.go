@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gl-johnson/mock-jwt-server/pkg/handlers"
+	"github.com/cyberark/mock-jwt-server/pkg/handlers"
 )
 
 func main() {

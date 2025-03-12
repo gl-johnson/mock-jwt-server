@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# conjur-template
-=======
-# mock-jwt-server
->>>>>>> b361af5 (Initial commit)
-=======
 # mock-jwt-server
 
 This is a simple mock JWT issuer that can be used to generate valid JWTs with various algorithms and claims. 
@@ -73,4 +66,4 @@ DELETE /<key_id> - Delete key
   - HS256
   - HS384
   - HS512
->>>>>>> 38f1789 (Implementation)
+

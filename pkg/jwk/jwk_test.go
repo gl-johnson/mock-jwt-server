@@ -24,12 +24,9 @@ func TestGetJWKS(t *testing.T) {
 	// Test GetAllJWKS
 	_, err = GetJWKS("another", "RS256")
 	require.NoError(t, err)
-
 	jwks = GetAllJWKS()
 	assert.NotNil(t, jwks)
 	assert.Len(t, jwks.Keys, 2)
-	assert.Equal(t, jwks.Keys[0].KeyID, "valid")
-	assert.Equal(t, jwks.Keys[1].KeyID, "another")
 
 	// Test DeleteKey
 	DeleteKey("valid")

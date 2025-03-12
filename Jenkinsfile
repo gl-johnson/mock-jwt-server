@@ -72,16 +72,17 @@ pipeline {
         }
       }
     }
-    stage('Stage running on Atlantis Jenkins Agent Container'){
-        steps {
-            sh 'scripts/in-container.sh'
-        }
-    }
-    stage('Stage on AWS Instance') {
+    stage('Build') {
       steps {
         script {
-          // Run script from repo on an AWS instance managed by infrapool
-          infrapool.agentSh 'scripts/on-instance.sh'
+          infrapool.agentSh 'bin/build'
+        }
+      }
+    }
+    stage('Run tests') {
+      steps {
+        script {
+          infrapool.agentSh 'bin/test'
         }
       }
     }
@@ -92,7 +93,6 @@ pipeline {
           MODE == "RELEASE"
         }
       }
-
       steps {
         script {
           release(infrapool, { billOfMaterialsDirectory, assetDirectory ->
@@ -109,6 +109,7 @@ pipeline {
                If your assets are in target on the main Jenkins agent, use:
                  infrapool.agentPut(from: 'target/', to: assetDirectory)
             */
+            infrapool.agentSh 'bin/publish'
           })
         }
       }

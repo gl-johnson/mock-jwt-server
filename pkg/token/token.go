@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gl-johnson/mock-jwt-server/pkg/jwk"
+	"github.com/cyberark/mock-jwt-server/pkg/jwk"
 
 	"github.com/golang-jwt/jwt/v4"
 )
