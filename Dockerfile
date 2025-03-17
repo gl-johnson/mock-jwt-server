@@ -12,6 +12,4 @@ RUN go build -o main ./cmd/main.go
 RUN chown -R appuser:appgroup /app
 USER appuser
 
-EXPOSE 8080
-
 CMD ["./main"]

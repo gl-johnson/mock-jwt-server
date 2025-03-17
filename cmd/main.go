@@ -16,6 +16,11 @@ func main() {
 	http.HandleFunc("/token", handlers.TokenHandler)
 	http.HandleFunc("/", handlers.DynamicKeyHandler)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	fmt.Printf(`
 mock-jwt-server usage:
 
@@ -25,8 +30,8 @@ GET /<key_id>/<algorithm> - Get/create specified JWKS
 POST /<key_id>/<algorithm> - Sign token with specified key/alg
 DELETE /<key_id> - Delete key
 
-Listening on :8080. Mapped to port %s on the host.
-`, os.Getenv("EXTERNAL_PORT"))
+Listening on port %s.
+`, port)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }

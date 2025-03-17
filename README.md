@@ -7,13 +7,9 @@ It is intended for testing purposes only.
 
 ### Running the server
 The start script will build and run the JWKS server in a Docker container. 
-The server will be available at `http://localhost:8080`, unless otherwise specified via a parameter.
+The server will be available at `http://localhost:8080`, unless otherwise specified via the PORT environment variable.
 ```bash
-# Maps port 8080 on the host
 ./bin/start
-
-# Maps port 8888 on the host
-./bin/start 8888
 ```
 
 ### Configuration
