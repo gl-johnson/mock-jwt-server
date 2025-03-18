@@ -30,13 +30,14 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '30'))
   }
 
-  triggers {
-    cron(getDailyCronString())
-  }
-
   environment {
     // Sets the MODE to the specified or autocalculated value as appropriate
     MODE = release.canonicalizeMode()
+  }
+
+  triggers {
+    // Run a weekly RELEASE build to rebuild latest image
+    parameterizedCron(getWeeklyCronString("H(1-5)","%MODE=RELEASE"))
   }
 
   stages {
