@@ -1,15 +1,16 @@
-FROM golang:1.24-alpine
-
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
-COPY . .
+COPY go.mod go.sum ./
 RUN go mod download
 
+COPY . .
 RUN go build -o main ./cmd/main.go
 
-RUN chown -R appuser:appgroup /app
-USER appuser
+#### Minimal image
+FROM scratch
 
-CMD ["./main"]
+COPY --from=builder /app/main /main
+
+CMD ["/main"]

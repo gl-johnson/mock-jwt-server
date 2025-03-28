@@ -2,6 +2,16 @@
 
 set -exo pipefail
 
-# go test -v ./...
-
-docker run --rm -v $(pwd):/app -w /app golang:1.24-alpine go test -v ./...
+docker run --rm -v $(pwd):/app -w /app golang:1.24 bash -c 'set -o pipefail;
+           output_dir="./output";
+           mkdir -p "$output_dir";
+           go install github.com/axw/gocov/gocov@latest;
+           go install github.com/AlekSi/gocov-xml@latest;
+           go install github.com/jstemmer/go-junit-report/v2@latest;
+           go test -coverprofile="$output_dir/c.out" -v ./... | tee "$output_dir/junit.output";
+           exit_code=$?;
+           echo "Tests finished - aggregating results...";
+           cat "$output_dir/junit.output" | go-junit-report > "$output_dir/junit.xml";
+           gocov convert "$output_dir/c.out" | gocov-xml > "$output_dir/coverage.xml";
+           echo "Exit code: $exit_code"; 
+           exit $exit_code' || (echo "TESTS FAILED" && exit 1)

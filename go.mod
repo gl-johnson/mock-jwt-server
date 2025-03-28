@@ -1,11 +1,9 @@
 module github.com/cyberark/mock-jwt-server
 
-go 1.23.0
-
-toolchain go1.24.0
+go 1.24.1
 
 require (
-	github.com/golang-jwt/jwt/v4 v4.5.1
+	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/stretchr/testify v1.10.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
