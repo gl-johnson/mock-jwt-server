@@ -86,6 +86,30 @@ pipeline {
           infrapool.agentSh 'bin/test'
         }
       }
+      post {
+        always {
+          script {
+            INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/coverage'
+            INFRAPOOL_EXECUTORV2_AGENT_0.agentStash name: 'xml-out', includes: 'output/*.xml'
+            unstash 'xml-out'
+            junit 'junit.xml'
+
+            cobertura autoUpdateHealth: false,
+              autoUpdateStability: false,
+              coberturaReportFile: 'coverage.xml',
+              conditionalCoverageTargets: '70, 0, 0',
+              failUnhealthy: false,
+              failUnstable: false,
+              maxNumberOfBuilds: 0,
+              lineCoverageTargets: '70, 0, 0',
+              methodCoverageTargets: '70, 0, 0',
+              onlyStable: false,
+              sourceEncoding: 'ASCII',
+              zoomCoverageChart: false
+              codacy action: 'reportCoverage', filePath: "coverage.xml"
+          }
+        }
+      }
     }
 
     stage('Release') {
