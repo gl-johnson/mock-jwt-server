@@ -14,4 +14,4 @@ docker run --rm -v $(pwd):/app -w /app golang:1.24 bash -c 'set -o pipefail;
            cat "$output_dir/junit.output" | go-junit-report > "$output_dir/junit.xml";
            gocov convert "$output_dir/c.out" | gocov-xml > "$output_dir/coverage.xml";
            echo "Exit code: $exit_code"; 
-           exit $exit_code'
+           exit $exit_code' || (echo "TESTS FAILED" && exit 1)

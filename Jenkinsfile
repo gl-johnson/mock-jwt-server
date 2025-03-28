@@ -89,8 +89,8 @@ pipeline {
       post {
         always {
           script {
-            INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/coverage'
-            INFRAPOOL_EXECUTORV2_AGENT_0.agentStash name: 'xml-out', includes: 'output/*.xml'
+            infrapool.agentSh './bin/coverage'
+            infrapool.agentStash name: 'xml-out', includes: 'output/*.xml'
             unstash 'xml-out'
             junit 'junit.xml'
 
