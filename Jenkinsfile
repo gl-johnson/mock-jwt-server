@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
 
+@Library("product-pipelines-shared-library") _
+
 // Automated release, promotion and dependencies
 properties([
   // Include the automated release parameters for the build
@@ -30,13 +32,14 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '30'))
   }
 
-  triggers {
-    cron(getDailyCronString())
-  }
-
   environment {
     // Sets the MODE to the specified or autocalculated value as appropriate
     MODE = release.canonicalizeMode()
+  }
+
+  triggers {
+    // Run a weekly RELEASE build to rebuild latest image
+    parameterizedCron(getWeeklyCronString("H(1-5)","%MODE=RELEASE"))
   }
 
   stages {
@@ -72,16 +75,41 @@ pipeline {
         }
       }
     }
-    stage('Stage running on Atlantis Jenkins Agent Container'){
-        steps {
-            sh 'scripts/in-container.sh'
-        }
-    }
-    stage('Stage on AWS Instance') {
+    stage('Build') {
       steps {
         script {
-          // Run script from repo on an AWS instance managed by infrapool
-          infrapool.agentSh 'scripts/on-instance.sh'
+          infrapool.agentSh 'bin/build'
+        }
+      }
+    }
+    stage('Run tests') {
+      steps {
+        script {
+          infrapool.agentSh 'bin/test'
+          infrapool.agentStash name: 'xml-out', includes: 'output/*.xml'
+        }
+      }
+      post {
+        always {
+          script {
+            unstash 'xml-out'
+            junit 'output/junit.xml'
+
+            cobertura autoUpdateHealth: false,
+              autoUpdateStability: false,
+              coberturaReportFile: 'output/coverage.xml',
+              conditionalCoverageTargets: '70, 0, 0',
+              failUnhealthy: false,
+              failUnstable: false,
+              maxNumberOfBuilds: 0,
+              lineCoverageTargets: '70, 0, 0',
+              methodCoverageTargets: '70, 0, 0',
+              onlyStable: false,
+              sourceEncoding: 'ASCII',
+              zoomCoverageChart: false
+            
+            codacy action: 'reportCoverage', filePath: "output/coverage.xml"
+          }
         }
       }
     }
@@ -92,7 +120,6 @@ pipeline {
           MODE == "RELEASE"
         }
       }
-
       steps {
         script {
           release(infrapool, { billOfMaterialsDirectory, assetDirectory ->
@@ -109,6 +136,7 @@ pipeline {
                If your assets are in target on the main Jenkins agent, use:
                  infrapool.agentPut(from: 'target/', to: assetDirectory)
             */
+            infrapool.agentSh 'bin/publish'
           })
         }
       }
