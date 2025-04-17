@@ -66,7 +66,7 @@ func DynamicKeyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleJWKS(w http.ResponseWriter, keyName, alg string) {
-	jwks, err := jwk.GetJWKS(keyName, alg)
+	jwks, err := jwk.GetPublicJWKS(keyName, alg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

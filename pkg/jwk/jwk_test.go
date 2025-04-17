@@ -21,6 +21,11 @@ func TestGetJWKS(t *testing.T) {
 	assert.Len(t, jwks.Keys, 1)
 	assert.Equal(t, jwks.Keys[0].KeyID, "valid")
 
+	// Test GetPublicJWKS returns only the public key attributes
+	jwks, err = GetPublicJWKS("valid", "RS256")
+	require.NoError(t, err)
+	assert.True(t, jwks.Keys[0].IsPublic())
+
 	// Test GetAllJWKS
 	_, err = GetJWKS("another", "RS256")
 	require.NoError(t, err)
