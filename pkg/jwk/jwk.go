@@ -40,7 +40,7 @@ func GetAllJWKS() *jose.JSONWebKeySet {
 			KeyID: name,
 			Use:   "sig",
 		}
-		jwks.Keys = append(jwks.Keys, jwk)
+		jwks.Keys = append(jwks.Keys, jwk.Public())
 	}
 
 	return jwks
@@ -54,6 +54,17 @@ func GetJWKS(keyName, alg string) (*jose.JSONWebKeySet, error) {
 
 	return &jose.JSONWebKeySet{
 		Keys: []jose.JSONWebKey{*key},
+	}, nil
+}
+
+func GetPublicJWKS(keyName, alg string) (*jose.JSONWebKeySet, error) {
+	key := getOrCreateKey(keyName, strings.ToUpper(alg))
+	if key == nil {
+		return nil, fmt.Errorf("unsupported algorithm: '%s', must one of: %v", alg, supportedAlgorithms)
+	}
+
+	return &jose.JSONWebKeySet{
+		Keys: []jose.JSONWebKey{key.Public()},
 	}, nil
 }
 
