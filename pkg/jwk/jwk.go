@@ -74,6 +74,10 @@ func DeleteKey(keyName string) {
 	keysLock.Unlock()
 }
 
+func GenerateDefaultKeys() {
+	getOrCreateKey("default", "RS256")
+}
+
 func getOrCreateKey(keyName, alg string) *jose.JSONWebKey {
 	keysLock.Lock()
 	defer keysLock.Unlock()

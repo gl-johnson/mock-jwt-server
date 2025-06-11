@@ -7,9 +7,12 @@ import (
 	"os"
 
 	"github.com/cyberark/mock-jwt-server/pkg/handlers"
+	"github.com/cyberark/mock-jwt-server/pkg/jwk"
 )
 
 func main() {
+	jwk.GenerateDefaultKeys()
+
 	http.HandleFunc("/.well-known/jwks.json", handlers.JWKSHandler)
 	http.HandleFunc("/.well-known/openid-configuration", handlers.OIDCConfigHandler)
 	http.HandleFunc("/jwks", handlers.JWKSHandler)
