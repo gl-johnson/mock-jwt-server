@@ -17,6 +17,7 @@ func main() {
 	http.HandleFunc("/.well-known/openid-configuration", handlers.OIDCConfigHandler)
 	http.HandleFunc("/jwks", handlers.JWKSHandler)
 	http.HandleFunc("/token", handlers.TokenHandler)
+	http.HandleFunc("/github/actions/idtoken", handlers.GitHubIDTokenHandler)
 	http.HandleFunc("/", handlers.DynamicKeyHandler)
 
 	port := os.Getenv("PORT")
@@ -28,6 +29,7 @@ func main() {
 mock-jwt-server usage:
 
 GET /token - Issue token with default key/alg (RS256)
+GET /github/actions/idtoken?audience=<aud> - GitHub Actions OIDC token (Bearer optional via OIDC_BEARER_TOKEN)
 GET /.well-known/jwks.json - Get complete JWKS
 GET /<key_id>/<algorithm> - Get/create specified JWKS
 POST /<key_id>/<algorithm> - Sign token with specified key/alg

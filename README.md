@@ -12,7 +12,8 @@ The server will be available at `http://localhost:8080`, unless otherwise specif
 ./bin/start
 ```
 
-### Configuration
+### Configuration (Generic JWT)
+
 Configurable claims can be modified by environment variables
 ```bash
 export ISSUER="some-issuer"
@@ -38,17 +39,34 @@ Otherwise the claims will be set to the following defaults:
 }
 ```
 
+#### GitHub Actions OIDC (`GET /github/actions/idtoken`)
+
+Request a token that mirrors a [GitHub Actions OIDC token](https://docs.github.com/en/actions/concepts/security/openid-connect#understanding-the-oidc-token).
+
+Identity-related claims come from a small set of variables; everything else uses GitHub-like hardcoded defaults (see `pkg/token/github.go`).
+
+| Variable | Purpose |
+|----------|---------|
+| `GITHUB_REPOSITORY` | `owner/repo` — drives `repository`, `repository_owner`, `sub`, and `job_workflow_ref` |
+| `GITHUB_ENVIRONMENT` | Optional — `sub` becomes `repo:OWNER/REPO:environment:NAME` and sets `environment` |
+| `EXTRA_CLAIMS` | Override any default claim (`claim=value;…`, applied last). Example: `sha=abc123;workflow=vault-demo.yml;run_id=99` |
+| `ISSUER` | Token `iss` (default `https://token.actions.githubusercontent.com`) |
+| `JWKS_BASE_URL` | Host published in OIDC discovery `jwks_uri` |
+
+`aud` is taken from the `audience` query parameter. `OIDC_BEARER_TOKEN` optionally requires `Authorization: Bearer`.
+
 ### Endpoints
 
 ```
-GET /token - Issue token with default key/alg (RS256)
+GET /token - Issue token with default key/alg (RS256); JSON includes `token` and `value`
+
+GET /github/actions/idtoken?audience=<aud> - GitHub Actions OIDC token API (`{"count":1,"value":"<jwt>"}`)
 
 GET /.well-known/jwks.json - Get complete JWKS
+GET /.well-known/openid-configuration - OIDC discovery (issuer + jwks_uri)
 
 GET /<key_id>/<algorithm> - Get/create specified JWKS
-
 POST /<key_id>/<algorithm> - Sign existing token with specified key/alg
-
 DELETE /<key_id> - Delete key
 ```
 

@@ -35,7 +35,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": signedToken})
+	json.NewEncoder(w).Encode(map[string]string{"token": signedToken, "value": signedToken})
 }
 
 func DynamicKeyHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +84,7 @@ func handleTokenSigning(w http.ResponseWriter, keyName, alg, remoteToken string)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": signedToken})
+	json.NewEncoder(w).Encode(map[string]string{"token": signedToken, "value": signedToken})
 }
 
 func handleKeyDelete(w http.ResponseWriter, keyName string) {

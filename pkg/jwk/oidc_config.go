@@ -32,5 +32,16 @@ var oidcConfigTemplate = `
 // This allows it to be used with the 'provider-uri' option instead of the 'jwks-uri' option if desired.
 func GetOIDCConfig() string {
 	issuer := os.Getenv("ISSUER")
-	return fmt.Sprintf(oidcConfigTemplate, issuer, issuer)
+	jwksBase := os.Getenv("JWKS_BASE_URL")
+	if jwksBase == "" {
+		jwksBase = issuer
+	}
+	if jwksBase == "" {
+		port := os.Getenv("PORT")
+		if port == "" {
+			port = "8080"
+		}
+		jwksBase = "http://localhost:" + port
+	}
+	return fmt.Sprintf(oidcConfigTemplate, jwksBase, issuer)
 }

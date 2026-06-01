@@ -52,6 +52,7 @@ func TestTokenHandler(t *testing.T) {
 	err := json.Unmarshal(resp.Body.Bytes(), &respBody)
 	require.NoError(t, err)
 	assert.Contains(t, respBody, "token")
+	assert.Equal(t, respBody["token"], respBody["value"])
 }
 
 func TestDynamicKeyHandler_Get(t *testing.T) {
@@ -98,6 +99,7 @@ func TestDynamicKeyHandler_Post(t *testing.T) {
 	err := json.Unmarshal(resp.Body.Bytes(), &respBody)
 	require.NoError(t, err)
 	assert.Contains(t, respBody, "token")
+	assert.Equal(t, respBody["token"], respBody["value"])
 }
 
 func TestDynamicKeyHandler_Delete(t *testing.T) {
